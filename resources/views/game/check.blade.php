@@ -19,6 +19,13 @@
                 <h4>Check Game ID / Username</h4>
               </div>
               <div class="card-body">
+                <div class="alert alert-light border-info">
+                  @php
+                    $hits = Cache::get('user_hits:' . Auth::id() . ':' . date('Y-m-d'), 0);
+                    $remaining = 50 - $hits;
+                  @endphp
+                  <i class="fas fa-info-circle text-info"></i> Limit harian: <strong><span id="currentHits">{{ $hits }}</span>/50</strong> (Tersisa: <span id="remainingHits">{{ $remaining }}</span> kali)
+                </div>
                 <form id="checkIdForm">
                   @csrf
 
@@ -84,6 +91,8 @@
         const errorResult = document.getElementById('errorResult');
         const playerName = document.getElementById('playerName');
         const errorMessage = document.getElementById('errorMessage');
+        const currentHitsSpan = document.getElementById('currentHits');
+        const remainingHitsSpan = document.getElementById('remainingHits');
 
         // Show/hide Zone ID field based on game selection
         gameSelect.addEventListener('change', function() {
@@ -129,6 +138,12 @@
             .then(response => response.json())
             .then(data => {
               resultSection.style.display = 'block';
+
+              // Update hit counter dynamically (always update if data is available)
+              if (data.hits !== undefined) {
+                currentHitsSpan.textContent = data.hits;
+                remainingHitsSpan.textContent = data.remaining;
+              }
 
               if (data.data && data.data !== 'error') {
                 // Handle both string and object responses

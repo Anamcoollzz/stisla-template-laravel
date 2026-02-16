@@ -1,0 +1,82 @@
+{
+  "info": {
+    "_postman_id": "ec7dcecb-42b9-4543-9b0d-1ff47eb85201",
+    "name": "ID GAME CHECKER",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "1758284",
+    "_collection_link": "https://go.postman.co/collection/1758284-ec7dcecb-42b9-4543-9b0d-1ff47eb85201?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "LIST GAME",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json",
+            "type": "text"
+          },
+          {
+            "key": "x-api-key",
+            "value": "{{APIKEY}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8000/api/games",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "games"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "CHECK ID GAME",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json",
+            "type": "text"
+          },
+          {
+            "key": "x-api-key",
+            "value": "{{APIKEY}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"game\": \"aov\",\n    // \"zoneid\": \"\", // khusus mobile legends\n    // \"server\": \"Asia\", // khusus genshin\n    \"id\": \"2759751839384733\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8000/api/check-id",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "check-id"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}

@@ -28,6 +28,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/api-key', [ApiKeyController::class, 'index'])->name('api-key.index');
     Route::post('/api-key/generate', [ApiKeyController::class, 'generate'])->name('api-key.generate');
     Route::post('/api-key/regenerate', [ApiKeyController::class, 'regenerate'])->name('api-key.regenerate');
+
+    Route::get('/download-template', [GameController::class, 'downloadTemplate'])->name('download-template');
 });
 
 // Public API Routes

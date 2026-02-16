@@ -23,16 +23,34 @@ class GameController extends Controller
         $game = $request->get('game');
         $id = $request->get('id');
         $zoneid = $request->get('zoneid');
+        $userId = auth()->id();
+        $today = date('Y-m-d');
+        $hitsKey = "user_hits:{$userId}:{$today}";
+
+        $currentHits = Cache::get($hitsKey, 0);
+        if ($currentHits >= 50) {
+            return response()->json([
+                'data' => 'error',
+                'message' => 'Limit harian tercapai (Maksimal 50 pengecekan per hari).'
+            ], 429);
+        }
+
+        // Increment hit counter for every request, regardless of cache hit or miss
+        if (Cache::has($hitsKey)) {
+            Cache::increment($hitsKey);
+        } else {
+            Cache::put($hitsKey, 1, now()->endOfDay());
+        }
 
         $cacheKey = 'check_id_' . $game . '_' . $id . '_' . $zoneid;
 
-        return Cache::remember($cacheKey, 600, function () use ($game, $id, $zoneid) {
-            $apiKey = "c9b26e7b2b1ce0c00cfbaab1231c8fb4275ce08458840a1c5c";
+        $result = Cache::remember($cacheKey, 600, function () use ($game, $id, $zoneid) {
+            $externalApiKey = "c9b26e7b2b1ce0c00cfbaab1231c8fb4275ce08458840a1c5c";
 
             $payload = [
                 "game" => $game,
                 "id" => $id,
-                "apikey" => $apiKey
+                "apikey" => $externalApiKey
             ];
 
             if ($game === 'ml') {
@@ -46,7 +64,7 @@ class GameController extends Controller
                     CURLOPT_RETURNTRANSFER => true,
                     CURLOPT_ENCODING => '',
                     CURLOPT_MAXREDIRS => 10,
-                    CURLOPT_TIMEOUT => 0,
+                    CURLOPT_TIMEOUT => 30,
                     CURLOPT_FOLLOWLOCATION => true,
                     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                     CURLOPT_CUSTOMREQUEST => 'POST',
@@ -61,35 +79,62 @@ class GameController extends Controller
                 curl_close($curl);
 
                 if ($err) {
-                    return response()->json(['data' => 'error', 'message' => $err], 500);
+                    return ['error' => true, 'message' => 'Connection error: ' . $err];
                 }
 
                 $data = json_decode($response, true);
 
-                // Handle different response formats
                 if (isset($data['data'])) {
                     $playerData = $data['data'];
-
-                    // If data is an array/object, try to extract username
                     if (is_array($playerData)) {
                         $username = $playerData['username'] ?? $playerData['name'] ?? $playerData['nickname'] ?? null;
-
                         if ($username) {
-                            return response()->json(['data' => $username]);
+                            return ['error' => false, 'username' => $username];
                         }
                     } elseif (is_string($playerData) && $playerData !== 'error') {
-                        // If data is already a string, return it
-                        return response()->json(['data' => $playerData]);
+                        return ['error' => false, 'username' => $playerData];
                     }
                 }
 
-                return response()->json([
-                    'data' => 'error',
-                    'message' => 'Player not found or invalid response format'
-                ]);
+                return ['error' => true, 'message' => 'Player not found'];
             } catch (\Exception $e) {
-                return response()->json(['data' => 'error', 'message' => $e->getMessage()], 500);
+                return ['error' => true, 'message' => 'Server error: ' . $e->getMessage()];
             }
         });
+
+        // Fix for old cached objects (JsonResponse)
+        if ($result instanceof \Illuminate\Http\JsonResponse) {
+            $data = $result->getData(true);
+            $username = $data['data'] ?? ($data['username'] ?? null);
+            $result = [
+                'error' => ($username === 'error' || !$username),
+                'username' => $username,
+                'message' => $data['message'] ?? 'Player not found'
+            ];
+        }
+
+        $hits = Cache::get($hitsKey, 0);
+        $remaining = 50 - $hits;
+
+        if ($result['error']) {
+            return response()->json([
+                'data' => 'error',
+                'message' => $result['message'],
+                'hits' => $hits,
+                'remaining' => $remaining
+            ], isset($result['message']) && str_contains($result['message'], 'Connection') ? 500 : 200);
+        }
+
+        return response()->json([
+            'data' => $result['username'],
+            'hits' => $hits,
+            'remaining' => $remaining
+        ]);
+    }
+
+    public function downloadTemplate()
+    {
+        $filePath = public_path('ID GAME CHECKER.postman_collection.json');
+        return response()->download($filePath);
     }
 }

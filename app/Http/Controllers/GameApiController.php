@@ -14,10 +14,11 @@ class GameApiController extends Controller
     public function listGames()
     {
         $games = [
-            ['code' => 'mobile_legends', 'name' => 'Mobile Legends'],
+            ['code' => 'ml', 'name' => 'Mobile Legends'],
             ['code' => 'freefire', 'name' => 'Free Fire'],
             ['code' => 'codm', 'name' => 'Call of Duty Mobile'],
             ['code' => 'genshin', 'name' => 'Genshin Impact'],
+            ['code' => 'aov', 'name' => 'Arena of Valor']
         ];
 
         return response()->json([
@@ -50,9 +51,30 @@ class GameApiController extends Controller
         $id = $request->get('id');
         $zoneid = $request->get('zoneid');
 
+        // Get user from middleware
+        $user = $request->get('api_user');
+        $userId = $user->id;
+        $today = date('Y-m-d');
+        $hitsKey = "user_hits:{$userId}:{$today}";
+
+        $currentHits = Cache::get($hitsKey, 0);
+        if ($currentHits >= 50) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Daily limit reached (Max 50 checks per day).'
+            ], 429);
+        }
+
+        // Increment hit counter for every request
+        if (Cache::has($hitsKey)) {
+            Cache::increment($hitsKey);
+        } else {
+            Cache::put($hitsKey, 1, now()->endOfDay());
+        }
+
         $cacheKey = 'api_check_id_' . $game . '_' . $id . '_' . $zoneid;
 
-        return Cache::remember($cacheKey, 600, function () use ($game, $id, $zoneid) {
+        $result = Cache::remember($cacheKey, 600, function () use ($game, $id, $zoneid) {
             // Using the same API key logic as GameController
             $externalApiKey = "c9b26e7b2b1ce0c00cfbaab1231c8fb4275ce08458840a1c5c";
 
@@ -93,10 +115,7 @@ class GameApiController extends Controller
                 curl_close($curl);
 
                 if ($err) {
-                    return response()->json([
-                        'status' => 'error',
-                        'message' => 'Connection error: ' . $err
-                    ], 500);
+                    return ['error' => true, 'message' => 'Connection error: ' . $err, 'code' => 500];
                 }
 
                 $data = json_decode($response, true);
@@ -112,27 +131,56 @@ class GameApiController extends Controller
                     }
 
                     if ($username) {
-                        return response()->json([
-                            'status' => 'success',
-                            'data' => [
-                                'game' => $game,
-                                'id' => $id,
-                                'username' => $username
-                            ]
-                        ]);
+                        return [
+                            'error' => false,
+                            'username' => $username,
+                            'game' => $game,
+                            'id' => $id
+                        ];
                     }
                 }
 
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Player not found or invalid response from provider'
-                ], 404);
+                return ['error' => true, 'message' => 'Player not found or invalid response from provider', 'code' => 404];
             } catch (\Exception $e) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Server error: ' . $e->getMessage()
-                ], 500);
+                return ['error' => true, 'message' => 'Server error: ' . $e->getMessage(), 'code' => 500];
             }
         });
+
+        // Fix for old cached objects (JsonResponse)
+        if ($result instanceof \Illuminate\Http\JsonResponse) {
+            $data = $result->getData(true);
+            $username = $data['data']['username'] ?? ($data['username'] ?? null);
+            $result = [
+                'error' => ($data['status'] ?? '') === 'error' || !$username,
+                'username' => $username,
+                'game' => $data['data']['game'] ?? $game,
+                'id' => $data['data']['id'] ?? $id,
+                'message' => $data['message'] ?? 'Player not found',
+                'code' => $result->getStatusCode()
+            ];
+        }
+
+        $hits = Cache::get($hitsKey, 0);
+        $remaining = 50 - $hits;
+
+        if ($result['error']) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $result['message'],
+                'hits' => $hits,
+                'remaining' => $remaining
+            ], $result['code'] ?? 200);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'data' => [
+                'game' => $result['game'],
+                'id' => $result['id'],
+                'username' => $result['username']
+            ],
+            'hits' => $hits,
+            'remaining' => $remaining
+        ]);
     }
 }
