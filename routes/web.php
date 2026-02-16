@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GameController;
+use App\Http\Controllers\ApiKeyController;
 use Illuminate\Support\Facades\Route;
 
 // Guest routes (only accessible when not authenticated)
@@ -22,4 +23,18 @@ Route::middleware('auth')->group(function () {
     // Game ID Checker
     Route::get('/game/check', [GameController::class, 'index'])->name('game.check');
     Route::post('/game/check-id', [GameController::class, 'checkId'])->name('game.check-id');
+
+    // API Key Routes
+    Route::get('/api-key', [ApiKeyController::class, 'index'])->name('api-key.index');
+    Route::post('/api-key/generate', [ApiKeyController::class, 'generate'])->name('api-key.generate');
+    Route::post('/api-key/regenerate', [ApiKeyController::class, 'regenerate'])->name('api-key.regenerate');
+});
+
+// Public API Routes
+use App\Http\Controllers\GameApiController;
+use App\Http\Middleware\CheckApiKey;
+
+Route::prefix('api')->middleware(CheckApiKey::class)->group(function () {
+    Route::get('/games', [GameApiController::class, 'listGames']);
+    Route::post('/check-id', [GameApiController::class, 'check']);
 });
