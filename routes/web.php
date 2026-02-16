@@ -3,12 +3,18 @@
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', [AuthController::class, 'dashboard'])->name('dashboard');
+// Guest routes (only accessible when not authenticated)
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [AuthController::class, 'formLogin'])->name('login');
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::get('/register', [AuthController::class, 'formRegister'])->name('register');
+    Route::post('/register', [AuthController::class, 'register']);
+});
 
-Route::get('/login', [AuthController::class, 'formLogin'])->name('login');
-Route::post('/login', [AuthController::class, 'login']);
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-Route::get('/register', [AuthController::class, 'formRegister'])->name('register');
-Route::post('/register', [AuthController::class, 'register']);
-Route::get('/dashboard', [AuthController::class, 'dashboard'])->name('dashboard');
-Route::get('/datatable', [AuthController::class, 'datatable'])->name('datatable');
+// Authenticated routes (require login)
+Route::middleware('auth')->group(function () {
+    Route::get('/', [AuthController::class, 'dashboard'])->name('dashboard');
+    Route::get('/dashboard', [AuthController::class, 'dashboard']);
+    Route::get('/datatable', [AuthController::class, 'datatable'])->name('datatable');
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+});
