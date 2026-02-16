@@ -4,6 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   <title>Ecommerce Dashboard &mdash; Stisla</title>
 
   <!-- General CSS Files -->
@@ -49,6 +50,7 @@
   <script src="{{ asset('node_modules/summernote/dist/summernote-bs4.js') }}"></script>
   <script src="{{ asset('node_modules/chocolat/dist/js/jquery.chocolat.min.js') }}"></script>
   @stack('js')
+  @stack('scripts')
 
   <!-- Template JS File -->
   <script src="{{ asset('assets/js/scripts.js') }}"></script>
