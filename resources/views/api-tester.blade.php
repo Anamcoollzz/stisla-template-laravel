@@ -143,6 +143,14 @@
         $('#btnSend').attr('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Sending...');
         $('#respStatus').removeClass('badge-secondary badge-success badge-danger').addClass('badge-warning').text('Processing...');
 
+        const payload = {
+          game: game,
+          id: id,
+        }
+
+        if (game === 'ml') {
+          payload.zoneid = zoneid;
+        }
         $.ajax({
           url: '{{ url('/api/check-id') }}',
           method: 'POST',
@@ -151,11 +159,7 @@
             'Accept': 'application/json',
             'Content-Type': 'application/json'
           },
-          data: JSON.stringify({
-            game: game,
-            id: id,
-            zoneid: zoneid
-          }),
+          data: JSON.stringify(payload),
           success: function(response, textStatus, xhr) {
             updateUI(response, xhr.status, 'badge-success');
           },

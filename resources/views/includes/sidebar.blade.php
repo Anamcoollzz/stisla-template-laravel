@@ -9,7 +9,7 @@
     <ul class="sidebar-menu">
       <li class="menu-header">Dashboard</li>
       <li class="{{ Request::is('dashboard') ? 'active' : '' }}"><a class="nav-link" href="{{ route('dashboard') }}"><i class="fas fa-fire"></i> <span>Dashboard</span></a></li>
-      <li class="{{ Request::is('game/check') ? 'active' : '' }}"><a class="nav-link" href="{{ route('game.check') }}"><i class="fas fa-id-card"></i> <span>Game ID Checker</span></a></li>
+      {{-- <li class="{{ Request::is('game/check') ? 'active' : '' }}"><a class="nav-link" href="{{ route('game.check') }}"><i class="fas fa-id-card"></i> <span>Game ID Checker</span></a></li> --}}
       <li class="{{ Request::is('api-key*') ? 'active' : '' }}"><a class="nav-link" href="{{ route('api-key.index') }}"><i class="fas fa-key"></i> <span>API Key</span></a></li>
       <li class="{{ Request::is('pricing') ? 'active' : '' }}"><a class="nav-link" href="{{ route('pricing') }}"><i class="fas fa-tag"></i> <span>Pricing</span></a></li>
       <li class="{{ Request::is('api-tester') ? 'active' : '' }}"><a class="nav-link" href="{{ route('api-tester') }}"><i class="fas fa-flask"></i> <span>API Tester</span></a></li>
