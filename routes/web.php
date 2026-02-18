@@ -38,6 +38,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::post('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::post('/subscribe', [ProfileController::class, 'subscribe'])->name('subscribe');
+
+    // Admin Routes
+    Route::prefix('admin')->middleware('admin')->group(function () {
+        Route::get('/dashboard', [\App\Http\Controllers\Admin\AdminDashboardController::class, 'index'])->name('admin.dashboard');
+        Route::get('/users', [\App\Http\Controllers\Admin\UserController::class, 'index'])->name('admin.users.index');
+        Route::post('/users/{user}/cancel-subscription', [\App\Http\Controllers\Admin\UserController::class, 'cancelSubscription'])->name('admin.users.cancel');
+    });
 });
 
 // Public API Routes

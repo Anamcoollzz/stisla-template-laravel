@@ -147,8 +147,8 @@ class GameController extends Controller
     public function apiTester()
     {
         $games = [
-            ['code' => 'ml', 'name' => 'Mobile Legends'],
             ['code' => 'freefire', 'name' => 'Free Fire'],
+            ['code' => 'ml', 'name' => 'Mobile Legends'],
             ['code' => 'codm', 'name' => 'Call of Duty Mobile'],
             ['code' => 'genshin', 'name' => 'Genshin Impact'],
             ['code' => 'aov', 'name' => 'Arena of Valor']

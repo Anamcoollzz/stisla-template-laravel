@@ -24,6 +24,7 @@ class User extends Authenticatable
         'api_key',
         'plan',
         'plan_expires_at',
+        'role',
     ];
 
     /**
@@ -37,6 +38,14 @@ class User extends Authenticatable
         }
 
         return 50;
+    }
+
+    /**
+     * Check if the user is an admin.
+     */
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
     }
 
     /**
