@@ -41,4 +41,15 @@ class ApiKeyController extends Controller
 
         return back()->with('success', 'API Key regenerated successfully!');
     }
+
+    public function delete(Request $request)
+    {
+        $user = Auth::user();
+
+        $user->update([
+            'api_key' => null
+        ]);
+
+        return back()->with('success', 'API Key deleted successfully!');
+    }
 }

@@ -47,38 +47,45 @@
                     <small class="form-text text-muted">Last generated: {{ $user->updated_at->diffForHumans() }}</small>
                   </div>
 
-                  <div class="mt-4">
-                    <form action="{{ route('api-key.regenerate') }}" method="POST" id="regenerateForm">
+                  <div class="mt-4 d-flex">
+                    <form action="{{ route('api-key.regenerate') }}" method="POST" id="regenerateForm" class="mr-2">
                       @csrf
                       <button type="button" class="btn btn-warning" onclick="confirmRegenerate()">
                         <i class="fas fa-redo"></i> Regenerate API Key
                       </button>
                     </form>
-                    <p class="mt-2 text-danger">
-                      <i class="fas fa-exclamation-triangle"></i> Warning: Regenerating your API key will invalidate the current one.
-                    </p>
-                  </div>
-                @else
-                  <div class="empty-state" data-height="400">
-                    <div class="empty-state-icon">
-                      <i class="fas fa-key"></i>
-                    </div>
-                    <h2>No API Key Generated</h2>
-                    <p class="lead">
-                      You haven't generated an API key yet. Click the button below to generate one.
-                    </p>
-                    <form action="{{ route('api-key.generate') }}" method="POST">
+                    <form action="{{ route('api-key.delete') }}" method="POST" id="deleteForm">
                       @csrf
-                      <button type="submit" class="btn btn-primary mt-4">Generate API Key</button>
+                      <button type="button" class="btn btn-danger" onclick="confirmDelete()">
+                        <i class="fas fa-trash"></i> Delete API Key
+                      </button>
                     </form>
                   </div>
-                @endif
+                  <p class="mt-2 text-danger small">
+                    <i class="fas fa-exclamation-triangle"></i> Warning: Regenerating or deleting your API key will immediately invalidate the current one.
+                  </p>
               </div>
+            @else
+              <div class="empty-state" data-height="400">
+                <div class="empty-state-icon">
+                  <i class="fas fa-key"></i>
+                </div>
+                <h2>No API Key Generated</h2>
+                <p class="lead">
+                  You haven't generated an API key yet. Click the button below to generate one.
+                </p>
+                <form action="{{ route('api-key.generate') }}" method="POST">
+                  @csrf
+                  <button type="submit" class="btn btn-primary mt-4">Generate API Key</button>
+                </form>
+              </div>
+              @endif
             </div>
           </div>
         </div>
       </div>
-    </section>
+  </div>
+  </section>
   </div>
 @endsection
 
@@ -112,6 +119,22 @@
       }).then((result) => {
         if (result.isConfirmed) {
           document.getElementById('regenerateForm').submit();
+        }
+      })
+    }
+
+    function confirmDelete() {
+      Swal.fire({
+        title: 'Delete API Key?',
+        text: "You will not be able to use the API until you generate a new key!",
+        icon: 'error',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, delete it!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          document.getElementById('deleteForm').submit();
         }
       })
     }

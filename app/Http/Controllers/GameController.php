@@ -137,4 +137,22 @@ class GameController extends Controller
         $filePath = public_path('ID GAME CHECKER.postman_collection.json');
         return response()->download($filePath);
     }
+
+    public function pricing()
+    {
+        return view('pricing');
+    }
+
+    public function apiTester()
+    {
+        $games = [
+            ['code' => 'ml', 'name' => 'Mobile Legends'],
+            ['code' => 'freefire', 'name' => 'Free Fire'],
+            ['code' => 'codm', 'name' => 'Call of Duty Mobile'],
+            ['code' => 'genshin', 'name' => 'Genshin Impact'],
+            ['code' => 'aov', 'name' => 'Arena of Valor']
+        ];
+
+        return view('api-tester', compact('games'));
+    }
 }

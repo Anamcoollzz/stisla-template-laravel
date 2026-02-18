@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\ApiKeyController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 // Guest routes (only accessible when not authenticated)
@@ -28,8 +29,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/api-key', [ApiKeyController::class, 'index'])->name('api-key.index');
     Route::post('/api-key/generate', [ApiKeyController::class, 'generate'])->name('api-key.generate');
     Route::post('/api-key/regenerate', [ApiKeyController::class, 'regenerate'])->name('api-key.regenerate');
+    Route::post('/api-key/delete', [ApiKeyController::class, 'delete'])->name('api-key.delete');
 
     Route::get('/download-template', [GameController::class, 'downloadTemplate'])->name('download-template');
+    Route::get('/pricing', [GameController::class, 'pricing'])->name('pricing');
+    Route::get('/api-tester', [GameController::class, 'apiTester'])->name('api-tester');
+
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::post('/profile', [ProfileController::class, 'update'])->name('profile.update');
 });
 
 // Public API Routes
