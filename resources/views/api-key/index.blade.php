@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title', 'API Key')
 
 @section('content')
   <div class="main-content">

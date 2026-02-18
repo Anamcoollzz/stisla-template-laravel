@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title', 'DataTables')
 
 @section('content')
   <!-- Main Content -->

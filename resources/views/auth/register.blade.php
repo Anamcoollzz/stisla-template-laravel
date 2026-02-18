@@ -1,4 +1,5 @@
 @extends('layouts.app-auth')
+@section('title', 'Register')
 
 @section('content')
   <section class="section">

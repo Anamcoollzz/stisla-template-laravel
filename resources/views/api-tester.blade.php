@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title', 'API Tester')
 
 @section('content')
   <div class="main-content">

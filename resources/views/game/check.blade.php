@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title', 'Game ID Checker')
 
 @section('content')
   <div class="main-content">
