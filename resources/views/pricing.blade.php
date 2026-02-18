@@ -17,7 +17,7 @@
 
         <div class="row">
           <div class="col-12 col-md-4 col-lg-4">
-            <div class="pricing pricing-design">
+            <div class="pricing">
               <div class="pricing-title">
                 Basic
               </div>
@@ -28,11 +28,11 @@
                 </div>
                 <div class="pricing-details">
                   <div class="pricing-item">
-                    <div class="pricing-item-icon bg-success"><i class="fas fa-check"></i></div>
+                    <div class="pricing-item-icon bg-success text-white"><i class="fas fa-check"></i></div>
                     <div class="pricing-item-label">50 Checks per day</div>
                   </div>
                   <div class="pricing-item">
-                    <div class="pricing-item-icon bg-success"><i class="fas fa-check"></i></div>
+                    <div class="pricing-item-icon bg-success text-white"><i class="fas fa-check"></i></div>
                     <div class="pricing-item-label">Public API Access</div>
                   </div>
                   <div class="pricing-item">
@@ -46,7 +46,7 @@
                 </div>
               </div>
               <div class="pricing-cta">
-                <a href="#">Current Plan <i class="fas fa-arrow-right"></i></a>
+                <a href="#">Current Plan <i class="fas fa-check"></i></a>
               </div>
             </div>
           </div>
@@ -62,15 +62,15 @@
                 </div>
                 <div class="pricing-details">
                   <div class="pricing-item">
-                    <div class="pricing-item-icon bg-success"><i class="fas fa-check"></i></div>
-                    <div class="pricing-item-label">5,000 Checks per day</div>
+                    <div class="pricing-item-icon bg-success text-white"><i class="fas fa-check"></i></div>
+                    <div class="pricing-item-label">1,000 Checks per day</div>
                   </div>
                   <div class="pricing-item">
-                    <div class="pricing-item-icon bg-success"><i class="fas fa-check"></i></div>
+                    <div class="pricing-item-icon bg-success text-white"><i class="fas fa-check"></i></div>
                     <div class="pricing-item-label">Public API Access</div>
                   </div>
                   <div class="pricing-item">
-                    <div class="pricing-item-icon bg-success"><i class="fas fa-check"></i></div>
+                    <div class="pricing-item-icon bg-success text-white"><i class="fas fa-check"></i></div>
                     <div class="pricing-item-label">Priority Support</div>
                   </div>
                   <div class="pricing-item">
@@ -80,12 +80,19 @@
                 </div>
               </div>
               <div class="pricing-cta">
-                <a href="#">Subscribe Now <i class="fas fa-arrow-right"></i></a>
+                @if (auth()->user()->plan === 'pro')
+                  <a href="#">Subscribed <i class="fas fa-check"></i></a>
+                @else
+                  <form action="{{ route('subscribe') }}" method="POST">
+                    @csrf
+                    <button type="submit" class="btn btn-primary btn-block p-3">Get Started <i class="fas fa-arrow-right"></i></button>
+                  </form>
+                @endif
               </div>
             </div>
           </div>
           <div class="col-12 col-md-4 col-lg-4">
-            <div class="pricing pricing-design">
+            <div class="pricing">
               <div class="pricing-title">
                 Ultimate
               </div>
@@ -96,25 +103,32 @@
                 </div>
                 <div class="pricing-details">
                   <div class="pricing-item">
-                    <div class="pricing-item-icon bg-success"><i class="fas fa-check"></i></div>
+                    <div class="pricing-item-icon bg-success text-white"><i class="fas fa-check"></i></div>
                     <div class="pricing-item-label">Unlimited Checks</div>
                   </div>
                   <div class="pricing-item">
-                    <div class="pricing-item-icon bg-success"><i class="fas fa-check"></i></div>
+                    <div class="pricing-item-icon bg-success text-white"><i class="fas fa-check"></i></div>
                     <div class="pricing-item-label">Public API Access</div>
                   </div>
                   <div class="pricing-item">
-                    <div class="pricing-item-icon bg-success"><i class="fas fa-check"></i></div>
+                    <div class="pricing-item-icon bg-success text-white"><i class="fas fa-check"></i></div>
                     <div class="pricing-item-label">Dedicated Account Manager</div>
                   </div>
                   <div class="pricing-item">
-                    <div class="pricing-item-icon bg-success"><i class="fas fa-check"></i></div>
+                    <div class="pricing-item-icon bg-success text-white"><i class="fas fa-check"></i></div>
                     <div class="pricing-item-label">24/7 Premium Support</div>
                   </div>
                 </div>
               </div>
               <div class="pricing-cta">
-                <a href="#">Contact Us <i class="fas fa-arrow-right"></i></a>
+                @if (auth()->user()->plan === 'pro')
+                  <a href="#">Plan Upgrade Available <i class="fas fa-arrow-up"></i></a>
+                @else
+                  <form action="{{ route('subscribe') }}" method="POST">
+                    @csrf
+                    <button type="submit" class="btn btn-primary btn-block p-3">Get Started <i class="fas fa-arrow-right"></i></button>
+                  </form>
+                @endif
               </div>
             </div>
           </div>
@@ -123,6 +137,7 @@
     </section>
   </div>
 @endsection
+
 
 @push('styles')
   <style>

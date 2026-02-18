@@ -49,4 +49,19 @@ class ProfileController extends Controller
 
         return back()->with('success', 'Profile updated successfully!');
     }
+
+    /**
+     * Mock subscription to upgrade user to Pro plan.
+     */
+    public function subscribe(Request $request)
+    {
+        $user = Auth::user();
+
+        // In a real app, this would happen after payment confirmation.
+        $user->update([
+            'plan' => 'pro'
+        ]);
+
+        return redirect()->route('dashboard')->with('success', 'Successfully subscribed to Pro plan! Your daily limit is now 1,000 checks.');
+    }
 }

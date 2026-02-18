@@ -23,15 +23,16 @@ class GameController extends Controller
         $game = $request->get('game');
         $id = $request->get('id');
         $zoneid = $request->get('zoneid');
-        $userId = auth()->id();
+        $user = auth()->user(); // Get the authenticated user object
         $today = date('Y-m-d');
-        $hitsKey = "user_hits:{$userId}:{$today}";
-
+        $hitsKey = "user_hits:{$user->id}:{$today}";
         $currentHits = Cache::get($hitsKey, 0);
-        if ($currentHits >= 50) {
+        $dailyLimit = $user->getDailyLimit(); // Get daily limit from user object
+
+        if ($currentHits >= $dailyLimit) {
             return response()->json([
-                'data' => 'error',
-                'message' => 'Limit harian tercapai (Maksimal 50 pengecekan per hari).'
+                'status' => 'error',
+                'message' => "Daily limit reached (Max $dailyLimit checks per day)."
             ], 429);
         }
 

@@ -12,6 +12,27 @@
       </div>
 
       <div class="section-body">
+        <div class="row mb-3">
+          <div class="col-lg-4 col-md-6 col-12">
+            <div class="card card-statistic-1 p-0 mb-0 shadow-none border">
+              <div class="card-icon bg-primary">
+                <i class="fas fa-search"></i>
+              </div>
+              <div class="card-wrap">
+                <div class="card-header">
+                  <h4>Sisa Limit</h4>
+                </div>
+                <div class="card-body" id="limit-counter">
+                  @php
+                    $hits = Cache::get('user_hits:' . Auth::id() . ':' . date('Y-m-d'), 0);
+                    $limit = Auth::user()->getDailyLimit();
+                    echo $limit - $hits;
+                  @endphp
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         <div class="row">
           <div class="col-12 col-md-8 offset-md-2">
             <div class="card">
@@ -19,13 +40,6 @@
                 <h4>Check Game ID / Username</h4>
               </div>
               <div class="card-body">
-                <div class="alert alert-light border-info">
-                  @php
-                    $hits = Cache::get('user_hits:' . Auth::id() . ':' . date('Y-m-d'), 0);
-                    $remaining = 50 - $hits;
-                  @endphp
-                  <i class="fas fa-info-circle text-info"></i> Limit harian: <strong><span id="currentHits">{{ $hits }}</span>/50</strong> (Tersisa: <span id="remainingHits">{{ $remaining }}</span> kali)
-                </div>
                 <form id="checkIdForm">
                   @csrf
 

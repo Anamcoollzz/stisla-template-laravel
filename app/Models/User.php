@@ -22,7 +22,16 @@ class User extends Authenticatable
         'email',
         'password',
         'api_key',
+        'plan',
     ];
+
+    /**
+     * Get the user's daily hit limit based on their plan.
+     */
+    public function getDailyLimit(): int
+    {
+        return ($this->plan === 'pro') ? 1000 : 50;
+    }
 
     /**
      * The attributes that should be hidden for serialization.

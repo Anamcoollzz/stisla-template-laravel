@@ -58,10 +58,12 @@ class GameApiController extends Controller
         $hitsKey = "user_hits:{$userId}:{$today}";
 
         $currentHits = Cache::get($hitsKey, 0);
-        if ($currentHits >= 50) {
+        $dailyLimit = $user->getDailyLimit();
+
+        if ($currentHits >= $dailyLimit) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Daily limit reached (Max 50 checks per day).'
+                'message' => "Daily limit reached (Max $dailyLimit checks per day)."
             ], 429);
         }
 

@@ -14,7 +14,7 @@
       <div class="section-body">
         <h2 class="section-title">Test Your API Integration</h2>
         <p class="section-lead text-danger">
-          <i class="fas fa-exclamation-circle"></i> <strong>Note:</strong> Requests made here use your real API Key and <strong>will</strong> count towards your daily hit limit (50/day).
+          <i class="fas fa-exclamation-circle"></i> <strong>Note:</strong> Requests made here use your real API Key and <strong>will</strong> count towards your daily hit limit ({{ auth()->user()->getDailyLimit() }}/day).
         </p>
 
         <div class="row">

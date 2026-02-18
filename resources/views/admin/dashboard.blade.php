@@ -16,7 +16,14 @@
                 <i class="fas fa-rocket"></i>
               </div>
               <h4>Welcome, {{ Auth::user()->name }}!</h4>
-              <div class="card-description">Anda siap untuk melakukan pengecekan ID game hari ini.</div>
+              <div class="card-description">
+                Akun Anda:
+                @if (Auth::user()->plan === 'pro')
+                  <span class="badge badge-primary">PRO PLAN (Dynamic)</span>
+                @else
+                  <span class="badge badge-secondary">FREE PLAN</span>
+                @endif
+              </div>
             </div>
           </div>
         </div>
@@ -35,7 +42,8 @@
               <div class="card-body">
                 @php
                   $hits = Cache::get('user_hits:' . Auth::id() . ':' . date('Y-m-d'), 0);
-                  echo 50 - $hits;
+                  $limit = Auth::user()->getDailyLimit();
+                  echo $limit - $hits;
                 @endphp
               </div>
             </div>
