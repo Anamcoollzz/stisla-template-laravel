@@ -46,7 +46,12 @@ class GameController extends Controller
         $cacheKey = 'check_id_' . $game . '_' . $id . '_' . $zoneid;
 
         $result = Cache::remember($cacheKey, 600, function () use ($game, $id, $zoneid) {
-            $externalApiKey = "c9b26e7b2b1ce0c00cfbaab1231c8fb4275ce08458840a1c5c";
+            $apiKeys = [
+                "c9b26e7b2b1ce0c00cfbaab1231c8fb4275ce08458840a1c5c",
+                "e702a13a316048d070f38bee93217624ac2a375f74dc61e3b5",
+                "0253316fe58b78180907f5fcbb6cac1c14267a662bf8e4958e"
+            ];
+            $externalApiKey = $apiKeys[array_rand($apiKeys)];
 
             $payload = [
                 "game" => $game,
@@ -115,7 +120,7 @@ class GameController extends Controller
         }
 
         $hits = Cache::get($hitsKey, 0);
-        $remaining = 50 - $hits;
+        $remaining = $dailyLimit - $hits;
 
         if ($result['error']) {
             return response()->json([
