@@ -23,6 +23,7 @@ class User extends Authenticatable
         'password',
         'api_key',
         'plan',
+        'plan_expires_at',
     ];
 
     /**
@@ -30,7 +31,12 @@ class User extends Authenticatable
      */
     public function getDailyLimit(): int
     {
-        return ($this->plan === 'pro') ? 1000 : 50;
+        // Check if plan is pro and not expired
+        if ($this->plan === 'pro' && $this->plan_expires_at && $this->plan_expires_at->isFuture()) {
+            return 1000;
+        }
+
+        return 50;
     }
 
     /**
@@ -53,6 +59,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'plan_expires_at' => 'datetime',
         ];
     }
 }

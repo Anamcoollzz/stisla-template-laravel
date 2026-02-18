@@ -80,7 +80,7 @@
                 </div>
               </div>
               <div class="pricing-cta">
-                @if (auth()->user()->plan === 'pro')
+                @if (auth()->user()->plan === 'pro' && auth()->user()->plan_expires_at && auth()->user()->plan_expires_at->isFuture())
                   <a href="#">Subscribed <i class="fas fa-check"></i></a>
                 @else
                   <form action="{{ route('subscribe') }}" method="POST">
@@ -121,7 +121,7 @@
                 </div>
               </div>
               <div class="pricing-cta">
-                @if (auth()->user()->plan === 'pro')
+                @if (auth()->user()->plan === 'pro' && auth()->user()->plan_expires_at && auth()->user()->plan_expires_at->isFuture())
                   <a href="#">Plan Upgrade Available <i class="fas fa-arrow-up"></i></a>
                 @else
                   <form action="{{ route('subscribe') }}" method="POST">

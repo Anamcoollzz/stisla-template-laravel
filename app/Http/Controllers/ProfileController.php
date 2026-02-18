@@ -58,10 +58,12 @@ class ProfileController extends Controller
         $user = Auth::user();
 
         // In a real app, this would happen after payment confirmation.
+        // We set the expiry to 30 days from now.
         $user->update([
-            'plan' => 'pro'
+            'plan' => 'pro',
+            'plan_expires_at' => now()->addDays(30)
         ]);
 
-        return redirect()->route('dashboard')->with('success', 'Successfully subscribed to Pro plan! Your daily limit is now 1,000 checks.');
+        return redirect()->route('dashboard')->with('success', 'Successfully subscribed to Pro plan! Your daily limit is now 1,000 checks (Valid for 30 days).');
     }
 }

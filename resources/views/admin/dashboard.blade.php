@@ -16,12 +16,15 @@
                 <i class="fas fa-rocket"></i>
               </div>
               <h4>Welcome, {{ Auth::user()->name }}!</h4>
-              <div class="card-description">
+              <div class="welcome-badge">
                 Akun Anda:
-                @if (Auth::user()->plan === 'pro')
+                @if (Auth::user()->plan === 'pro' && Auth::user()->plan_expires_at && Auth::user()->plan_expires_at->isFuture())
                   <span class="badge badge-primary">PRO PLAN (Dynamic)</span>
+                  <div class="mt-2 small opacity-8">
+                    <i class="fas fa-calendar-alt"></i> Berlaku hingga: {{ Auth::user()->plan_expires_at->translatedFormat('d F Y') }}
+                  </div>
                 @else
-                  <span class="badge badge-secondary">FREE PLAN</span>
+                  <span class="badge badge-warning">FREE PLAN</span>
                 @endif
               </div>
             </div>
